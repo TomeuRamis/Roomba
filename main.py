@@ -1,9 +1,18 @@
+##################################################
+# Sistemas Inteligentes - Práctica 1             #
+# Bartomeu Ramis Tarragó y David Cantero Tirado  #
+##################################################
+
 from tablero import Tablero
 from button import Button
 from graphics import GraphWin, color_rgb, Rectangle, Point, Text
 
-tablero = Tablero(15, 8)
-
+numFilas = 8
+numColumnas = 15
+tablero = Tablero(numColumnas, numFilas)
+paused = True
+walls = False
+roombas = False
 
 butStart = Button(5, 5, 100, 40, "Start/Stop", True)
 butWalls = Button(110, 5, 100, 40, "Walls", True)
@@ -12,40 +21,52 @@ butClear = Button(320, 5, 100, 40, "Clear", False)
 
 
 def func_start(pressed):
+    global paused
     if(pressed):
-        print(":)")
+        if (butRobot.pressed): butRobot.press(win)
+        if (butWalls.pressed): butWalls.press(win)
+        paused = False
     else:
-        print(":(")
+        paused = True
+    setText("")
 
 
 def func_walls(pressed):
+    global walls
     if(pressed):
-        print(":)")
+        if (butRobot.pressed): butRobot.press(win)
+        if (butStart.pressed): butStart.press(win)
+        walls = True
     else:
-        print(":(")
+        walls = False
+    setText("")
 
 
 def func_robot(pressed):
+    global roombas
     if(pressed):
-        print(":)")
+        if (butWalls.pressed): butWalls.press(win)
+        if (butStart.pressed): butStart.press(win)
+        roombas = True
     else:
-        print(":(")
+        roombas = False
+    setText("")
 
 
 def func_clear(pressed):
     setText("Tablero limpiado!")
+    tablero.clear()
+    tablero.draw(win)
 
-butStart.setFunc()
-butWalls.set
-butRobot.draw(win)
-butClear.draw(win)
+butStart.setFunc(func_start)
+butWalls.setFunc(func_walls)
+butRobot.setFunc(func_robot)
+butClear.setFunc(func_clear)
 
 info = Rectangle(Point(425,5),Point(745,45))
 infoText = Text(info.getCenter(),"")
 
 def main():
-
-    tablero = Tablero(15, 8)
     global win 
     win = GraphWin("Practica 1 - Robotito :)", tablero.cols *
                    tablero.cell_size, tablero.rows*tablero.cell_size + 50)
@@ -61,49 +82,19 @@ def main():
         xpos = point.getX()
         ypos = point.getY()
         if(ypos > 50):
-            tablero.toggle(xpos, ypos-50, win)
+            if(walls): tablero.toggle(xpos, ypos-50, win)
+            if(roombas): tablero.setRobot(xpos, ypos-50, win)
+
         else:
             if(butStart.isInside(xpos, ypos)): butStart.press(win)
             elif(butWalls.isInside(xpos, ypos)): butWalls.press(win)
             elif(butRobot.isInside(xpos, ypos)): butRobot.press(win)
             elif(butClear.isInside(xpos, ypos)): butClear.press(win)
 
-
-
-    #win = GraphWin("My Circle", width, height)
-    #square = Rectangle(Point(cell_size,cell_size), Point(width-cell_size, height-cell_size))
-    #square.setFill(color_rgb(230, 230, 230))
-    # square.draw(win)
-
-    # for i in range(1, columns-1):
-    #    line = Line(Point(i*cell_size,cell_size),Point(i*cell_size,height-cell_size))
-    #    line.draw(win)
-    # for j in range(1, rows-1):
-    #    line = Line(Point(cell_size,j*cell_size),Point(width-cell_size,j*cell_size))
-    #    line.draw(win)
-        # for i in range(1, columns-1):
-        #    for j in range(1, rows-1):
-        #        square = Square(i, j, cell_size)
-        #        square.draw(win)
-
-    # while True:
-    #    point = win.getMouse()
-    #    posx = point.getX()
-    #    posy = point.getY()
-    #    click_col = math.floor(posx/cell_size)
-    #    click_row = math.floor(posy/cell_size)
-    #    card = Rectangle(Point(click_col*cell_size,click_row*cell_size),Point(click_col*cell_size+cell_size,click_row*cell_size+cell_size))
-    #    card.setFill(color_rgb(192,192,192))
-    #    card.draw(win)
-
-    # win.getMouse() # Pause to view result
-    # win.close()    # Close window when done
-
 def setText(texto):
     infoText.setText(texto)
     infoText.undraw()
     infoText.draw(win)
-
 
 
 main()
