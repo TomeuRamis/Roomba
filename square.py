@@ -1,22 +1,28 @@
-from graphics import *
+from graphics import Rectangle,Point,color_rgb
 
 class Square:
 
     def __init__(self, x, y, size):
-        self.col = x
-        self.row = y
-        self.square = Rectangle(Point(x*size,y*size), Point(x*size+size, y*size+size))
-        self.void = False
+        self.col = x        #Igual no hace falta
+        self.row = y        #Igual no hace falta
+        self.size = size    #Igual no hace falta
 
-    def filled(self):
-        self.void = True
+        self.wall = False
+        self.square = Rectangle(Point(x*size,y*size+50), Point(x*size+size, y*size+size+50))
+
+    def toggle(self):
+        self.wall = not self.wall
 
     def draw(self, win):
-        if(self.void):
-            self.square.setFill(color_rgb(230, 230, 230))
+        if(self.wall):
+            self.square.setFill(color_rgb(55, 55, 55))
         else:
-            self.square.setFill(color_rgb(192,192,192))
+            self.square.setFill(color_rgb(230,230,230))
+        self.square.undraw()
         self.square.draw(win)
 
-    def getVoid(self):
-        return self.void
+    def pintar(self):
+        print("x: " + str(self.col) + " y: "+ str(self.row))
+
+    def isWall(self):
+        return self.wall
