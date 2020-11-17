@@ -23,6 +23,8 @@ class Tablero:
     def toggle(self, xpos, ypos, win):
         col = int(xpos / self.cell_size)
         row = int(ypos / self.cell_size)
+
+        if(not (self.robot is None) and col == self.robot.getCol() and row == self.robot.getRow()): self.robot = None
         self.cells[row][col].toggle()
         self.cells[row][col].draw(win)
 
@@ -44,3 +46,21 @@ class Tablero:
             else:
                 self.robot.move(col,row)
             self.robot.draw(win)
+
+    def hasRobot(self):
+        return not (self.robot is None)
+
+    def roboStep(self):
+        roboX = self.robot.getCol()
+        roboY = self.robot.getRow()
+        x = [False, False, False, False, False, False, False, False]
+        x[0] = roboX == 0 or roboY == 0 or self.cells[roboX-1][roboY-1].isWall() 
+        x[1] = roboY == 0 or self.cells[roboX][roboY-1].isWall() 
+        x[2] = roboX == self.cols-1 or roboY == 0 or self.cells[roboX+1][roboY-1].isWall() 
+        x[3] = roboX == self.cols-1 or self.cells[roboX+1][roboY].isWall() 
+        x[4] = roboX == self.cols-1 or roboY == self.rows-1 or self.cells[roboX+1][roboY+1].isWall() 
+        x[5] = roboY == self.rows-1 or self.cells[roboX][roboY+1].isWall() 
+        x[6] = roboX == 0 or roboY == self.rows-1 or self.cells[roboX-1][roboY+1].isWall() 
+        x[7] = roboX == 0 or self.cells[roboX-1][roboY].isWall()
+        self.robot.actualizarPercepciones(x)
+        self.robot.razona()
