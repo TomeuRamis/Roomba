@@ -11,6 +11,7 @@ class Robot:
         self.circle = Circle(Point(x*50 + 25, y*50 + 50 +25), 20)
         self.facing = self.NORTE
         self.face = self._getFace()
+        self.attached = False
         self.s = [False, False, False, False, False, False, False, False]
         self.x = [False, False, False, False]
 
@@ -36,6 +37,9 @@ class Robot:
     def getRow(self):
         return self.row
 
+    def detach(self):
+        self.attached = False
+
     def actualizarPercepciones(self, perc):
         self.s = perc
         self.x[0] = perc[1] or perc[2]
@@ -54,18 +58,34 @@ class Robot:
 
     def razona(self):
         x = self.x
+        s = self.s
         if(not (x[0] or x[1] or x[2] or x[3])): self.desplaza(self.NORTE)
-        elif(x[0] and (not x[1])): 
-            if x[3]:
-                if(self.facing == self.NORTE or self.facing == self.OESTE):
-                    self.desplaza(self.OESTE)
-                else:
-                    self.desplaza(self.ESTE)
-            
-        elif(x[1] and (not x[2])): self.desplaza(self.SUR)
-        elif(x[2] and (not x[3])): self.desplaza(self.OESTE)
-        elif(x[3] and (not x[0])): self.desplaza(self.NORTE)
-        elif(x[0] and x[2]): self.desplaza(self.facing)
+        elif not self.attached:
+            if x[0] and not s[3]: self.desplaza(self.ESTE)
+            elif x[1] and not s[5]: self.desplaza(self.SUR)
+            elif x[2] and not s[7]: self.desplaza(self.OESTE)
+            elif x[3] and not s[1]: self.desplaza(self.NORTE)
+            self.attached = True
+        elif self.facing == self.SUR:
+            if not s[3]: self.desplaza(self.ESTE)
+            elif not s[5]: self.desplaza(self.SUR)
+            elif not s[7]: self.desplaza(self.OESTE)
+            elif not s[1]: self.desplaza(self.NORTE) 
+        elif self.facing == self.NORTE:
+            if not s[7]: self.desplaza(self.OESTE)
+            elif not s[1]: self.desplaza(self.NORTE) 
+            elif not s[3]: self.desplaza(self.ESTE)
+            elif not s[5]: self.desplaza(self.SUR)
+        elif self.facing == self.ESTE:
+            if not s[1]: self.desplaza(self.NORTE) 
+            elif not s[3]: self.desplaza(self.ESTE)
+            elif not s[5]: self.desplaza(self.SUR)
+            elif not s[7]: self.desplaza(self.OESTE)
+        elif self.facing == self.OESTE:
+            if not s[5]: self.desplaza(self.SUR)
+            elif not s[7]: self.desplaza(self.OESTE)
+            elif not s[1]: self.desplaza(self.NORTE) 
+            elif not s[3]: self.desplaza(self.ESTE)
 
     def _getFace(self):
         x1 = 0

@@ -43,7 +43,8 @@ def func_start(pressed):
             setText("Falta poner un robot")
     else:
         paused = True
-        roboThread.stop()
+        if tablero.hasRobot(): tablero.detach()
+        if not roboThread is None : roboThread.stop()
         setText("")
 
 
@@ -105,11 +106,8 @@ def main():
     
 
 def roboFunc():
-    #while not paused:
-        #print(":D")
-        tablero.roboStep()
-        tablero.drawRobot(win)
-        #time.sleep(1)
+    tablero.roboStep()
+    tablero.drawRobot(win)
 
 def setText(texto):
     infoText.setText(texto)

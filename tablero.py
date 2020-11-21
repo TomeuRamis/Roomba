@@ -66,6 +66,7 @@ class Tablero:
             if(self.robot is None):
                 self.robot = Robot(col,row)
             else:
+                self.robot.detach()
                 self.robot.move(col,row)
             self.robot.draw(win)
 
@@ -87,3 +88,6 @@ class Tablero:
         x[7] = roboX == 0 or self.cells[roboY][roboX-1].isWall()
         self.robot.actualizarPercepciones(x)
         self.robot.razona()
+
+    def detach(self):
+        self.robot.detach()
