@@ -6,6 +6,7 @@
 from tablero import Tablero
 from button import Button
 from graphics import GraphWin, color_rgb, Rectangle, Point, Text
+from tkRepeatingTask import TkRepeatingTask, BackgroundTask
 import threading
 import time
 import graphics
@@ -16,6 +17,7 @@ tablero = Tablero(numColumnas, numFilas)
 paused = True
 walls = False
 roombas = False
+roboThread = None
 
 butStart = Button(5, 5, 100, 40, "Start/Stop", True)
 butWalls = Button(110, 5, 100, 40, "Walls", True)
@@ -30,14 +32,18 @@ def func_start(pressed):
             if (butRobot.pressed): butRobot.press(win)
             if (butWalls.pressed): butWalls.press(win)
             paused = False
-            roboThread = threading.Thread(target=roboFunc)
+            global roboThread
+            roboThread = TkRepeatingTask(graphics.getRoot(), roboFunc, 250)
             roboThread.start()
+            #roboThread = threading.Thread(target=roboFunc)
+            #roboThread.start()
             setText("")
         else:
             butStart.press(win)
             setText("Falta poner un robot")
     else:
         paused = True
+        roboThread.stop()
         setText("")
 
 
@@ -88,37 +94,48 @@ def main():
     butRobot.draw(win)
     butClear.draw(win)
 
+    win.bind("<Button-1>",mousepressHandler)
+    win.bind("<B1-Motion>",mousedragHandler)
+    
     while True:
         try:
-            point = win.getMouse()
-            xpos = point.getX()
-            ypos = point.getY()
-            if(ypos > 50):
-                if(walls): tablero.toggle(xpos, ypos-50, win)
-                if(roombas): tablero.setRobot(xpos, ypos-50, win)
-
-            else:
-                if(butStart.isInside(xpos, ypos)): butStart.press(win)
-                elif(butWalls.isInside(xpos, ypos)): butWalls.press(win)
-                elif(butRobot.isInside(xpos, ypos)): butRobot.press(win)
-                elif(butClear.isInside(xpos, ypos)): butClear.press(win)
-        except graphics.GraphicsError:
-            global paused
-            paused = True
+            _ = win.getKey()
+        except:
             break
     
 
 def roboFunc():
-    while not paused:
-        print(":D")
+    #while not paused:
+        #print(":D")
         tablero.roboStep()
-        tablero.draw(win)
-        time.sleep(1)
+        tablero.drawRobot(win)
+        #time.sleep(1)
 
 def setText(texto):
     infoText.setText(texto)
     infoText.undraw()
     infoText.draw(win)
 
+def mousepressHandler(event):
+    #print("Click en x:" + str(event.x) + " y: " + str(event.y))
+    xpos = event.x
+    ypos = event.y
+    if(ypos > 50):
+        if(roombas): tablero.setRobot(xpos, ypos-50, win)
+        elif(walls): 
+            tablero.startStroke(xpos, ypos-50)
+            tablero.updateStroke(xpos, ypos-50, win)
+    else:
+        if(butStart.isInside(xpos, ypos)): butStart.press(win)
+        elif(butWalls.isInside(xpos, ypos)): butWalls.press(win)
+        elif(butRobot.isInside(xpos, ypos)): butRobot.press(win)
+        elif(butClear.isInside(xpos, ypos)): butClear.press(win)
+
+def mousedragHandler(event):
+    xpos = event.x
+    ypos = event.y
+    if(xpos <= win.getWidth() and ypos <= win.getHeight() and xpos > 0 and ypos > 0):
+        if(ypos > 50 and walls):
+            tablero.updateStroke(xpos, ypos-50, win)
 
 main()

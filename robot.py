@@ -1,23 +1,34 @@
-from graphics import Circle,Point,color_rgb
+from graphics import Rectangle,Circle,Point,color_rgb
 class Robot:
+    NORTE = 0
+    ESTE = 1
+    SUR = 2
+    OESTE = 3
 
     def __init__(self, x, y):
         self.col = x
         self.row = y
         self.circle = Circle(Point(x*50 + 25, y*50 + 50 +25), 20)
+        self.facing = self.NORTE
+        self.face = self._getFace()
         self.s = [False, False, False, False, False, False, False, False]
         self.x = [False, False, False, False]
 
     def move(self,x,y):
         self.col = x
         self.row = y
-        #self.circle.undraw()
+        self.circle.undraw()
+        self.face.undraw()
         self.circle = Circle(Point(x*50 + 25, y*50 + 50 +25), 20)
+        self.face = self._getFace()
 
     def draw(self, win):
         self.circle.setFill(color_rgb(0,0,0))
+        self.face.setFill(color_rgb(0,0,0))
         self.circle.undraw()
+        self.face.undraw()
         self.circle.draw(win)
+        self.face.draw(win)
 
     def getCol(self):
         return self.col
@@ -33,21 +44,52 @@ class Robot:
         self.x[3] = perc[7] or perc[0]
         
     def desplaza(self, dir):
-        # 0 - norte
-        # 1 - este
-        # 2 - sur
-        # 3 - oeste
         x = self.col
         y = self.row
-        if (dir == 0):   self.move(x    , y - 1)
-        elif (dir == 1): self.move(x + 1, y)
-        elif (dir == 2): self.move(x    , y + 1)
-        elif (dir == 3): self.move(x - 1, y)
+        self.facing = dir
+        if (dir == self.NORTE):   self.move(x    , y - 1)
+        elif (dir == self.ESTE): self.move(x + 1, y)
+        elif (dir == self.SUR): self.move(x    , y + 1)
+        elif (dir == self.OESTE): self.move(x - 1, y)
 
     def razona(self):
         x = self.x
-        if(not (x[0] or x[1] or x[2] or x[3])): self.desplaza(0) #Norte
-        elif(x[0] and (not x[1])): self.desplaza(1) #Este
-        elif(x[1] and (not x[2])): self.desplaza(2) #Sur
-        elif(x[2] and (not x[3])): self.desplaza(3) #Oeste
-        elif(x[3] and (not x[0])): self.desplaza(0) #Norte
+        if(not (x[0] or x[1] or x[2] or x[3])): self.desplaza(self.NORTE)
+        elif(x[0] and (not x[1])): 
+            if x[3]:
+                if(self.facing == self.NORTE or self.facing == self.OESTE):
+                    self.desplaza(self.OESTE)
+                else:
+                    self.desplaza(self.ESTE)
+            
+        elif(x[1] and (not x[2])): self.desplaza(self.SUR)
+        elif(x[2] and (not x[3])): self.desplaza(self.OESTE)
+        elif(x[3] and (not x[0])): self.desplaza(self.NORTE)
+        elif(x[0] and x[2]): self.desplaza(self.facing)
+
+    def _getFace(self):
+        x1 = 0
+        y1 = 0
+        x2 = 0
+        y2 = 0
+        if (self.facing == self.NORTE):
+            x1 = self.col * 50 + 20
+            y1 = self.row * 50 + 50
+            x2 = x1 + 10
+            y2 = y1 + 10
+        elif (self.facing == self.ESTE):
+            x1 = self.col * 50 + 40
+            y1 = self.row * 50 + 20 + 50
+            x2 = x1 + 10
+            y2 = y1 + 10
+        elif (self.facing == self.SUR):
+            x1 = self.col * 50 + 20
+            y1 = self.row * 50 + 40 + 50
+            x2 = x1 + 10
+            y2 = y1 + 10
+        elif (self.facing == self.OESTE):
+            x1 = self.col * 50
+            y1 = self.row * 50 + 20 + 50
+            x2 = x1 + 10
+            y2 = y1 + 10
+        return Rectangle(Point(x1,y1),Point(x2,y2))

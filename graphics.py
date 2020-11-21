@@ -200,6 +200,10 @@ def update(rate=None):
 
     _root.update()
 
+########## Añadido por David ###########
+def getRoot():
+    return _root
+
 ############################################################################
 # Graphics classes start here
         

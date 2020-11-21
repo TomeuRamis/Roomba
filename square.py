@@ -13,6 +13,9 @@ class Square:
     def toggle(self):
         self.wall = not self.wall
 
+    def setWall(self, wall):
+        self.wall = wall
+
     def draw(self, win):
         if(self.wall):
             self.square.setFill(color_rgb(55, 55, 55))
