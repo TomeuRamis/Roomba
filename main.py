@@ -21,7 +21,7 @@ roboThread = None
 
 butStart = Button(5, 5, 100, 40, "Start/Stop", True)
 butWalls = Button(110, 5, 100, 40, "Walls", True)
-butRobot = Button(215, 5, 100, 40, "Roboto", True)
+butRobot = Button(215, 5, 100, 40, "Robot", True)
 butClear = Button(320, 5, 100, 40, "Clear", False)
 
 
@@ -86,7 +86,7 @@ infoText = Text(info.getCenter(),"")
 
 def main():
     global win 
-    win = GraphWin("Practica 1 - Robotito :)", tablero.cols *
+    win = GraphWin("Practica 1 - Robot", tablero.cols *
                    tablero.cell_size, tablero.rows*tablero.cell_size + 50)
     win.setBackground(color_rgb(192, 192, 192))
     tablero.draw(win)

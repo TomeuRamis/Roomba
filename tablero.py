@@ -56,8 +56,9 @@ class Tablero:
                 self.cells[i][j].square.undraw()
         self.cells = [[Square(i, j, self.cell_size)
                        for i in range(self.cols)] for j in range(self.rows)]
-        self.robot.circle.undraw()
-        self.robot = None
+        if not self.robot is None:
+            self.robot.undraw()
+            self.robot = None
 
     def setRobot(self, xpos, ypos, win):
         col = int(xpos / self.cell_size)

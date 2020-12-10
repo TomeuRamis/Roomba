@@ -31,6 +31,10 @@ class Robot:
         self.circle.draw(win)
         self.face.draw(win)
 
+    def undraw(self):
+        self.circle.undraw()
+        self.face.undraw()
+
     def getCol(self):
         return self.col
     
