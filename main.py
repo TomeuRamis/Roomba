@@ -73,10 +73,12 @@ def func_robot(pressed):
 
 
 def func_clear(pressed):
+    butClear.lock(win)
     if (butStart.pressed): butStart.press(win)
     setText("Tablero limpiado!")
     tablero.clear()
     tablero.draw(win)
+    butClear.unlock(win)
 
 butStart.setFunc(func_start)
 butWalls.setFunc(func_walls)
