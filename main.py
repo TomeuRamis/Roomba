@@ -31,6 +31,7 @@ def func_start(pressed):
         if (tablero.hasRobot()):
             if (butRobot.pressed): butRobot.press(win)
             if (butWalls.pressed): butWalls.press(win)
+            butClear.lock(win)
             paused = False
             global roboThread
             roboThread = TkRepeatingTask(graphics.getRoot(), roboFunc, 250)
@@ -46,6 +47,7 @@ def func_start(pressed):
         if tablero.hasRobot(): tablero.detach()
         if not roboThread is None : roboThread.stop()
         setText("")
+        butClear.unlock(win)
 
 
 def func_walls(pressed):

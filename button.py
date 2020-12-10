@@ -8,15 +8,17 @@ class Button:
         self.toggle = toggle
         self.pressed = False
         self.func = None
+        self.locked = False
         
     def press(self,win):
-        if(self.toggle):
-            self.pressed = not self.pressed
-        self.func(self.pressed)
-        self.draw(win)
+        if not self.locked:
+            if(self.toggle):
+                self.pressed = not self.pressed
+            self.func(self.pressed)
+            self.draw(win)
 
     def draw(self,win):
-        if(self.pressed):
+        if(self.pressed or self.locked):
             self.rect.setFill(color_rgb(100,100,100))
         else:
             self.rect.setFill(color_rgb(170,170,170))
@@ -34,4 +36,12 @@ class Button:
 
     def setFunc(self, func):
         self.func = func
+
+    def lock(self, win):
+        self.locked = True
+        self.draw(win)
+
+    def unlock(self, win):
+        self.locked = False
+        self.draw(win)
             
